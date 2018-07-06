@@ -129,10 +129,6 @@ public class TimelineActivity extends AppCompatActivity {
             tweets.add(0,tweet);
             tweetAdapter.notifyItemInserted(0);
             rvTweets.scrollToPosition(0);
-            // Extract name value from result extras
-            //String tweet = data.getExtras().getString("tweet");
-            // Toast the name to display temporarily on screen
-            //Toast.makeText(this, tweet.body, Toast.LENGTH_SHORT).show();
         }
     }
 
