@@ -36,8 +36,8 @@ public class ComposeTweet extends AppCompatActivity {
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                EditText etName = (EditText) findViewById(R.id.composedTweet);
-                tweet = etName.getText().toString();
+                EditText bodyText = (EditText) findViewById(R.id.composedTweet);
+                tweet = bodyText.getText().toString();
                 postTweet(tweet);
             }
         });

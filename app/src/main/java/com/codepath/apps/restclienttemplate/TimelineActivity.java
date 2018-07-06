@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -28,6 +30,9 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
+    private SwipeRefreshLayout swipeContainer;
+    private final String TAG = "debug!!!";
+    ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,26 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         //set adapter
         rvTweets.setAdapter(tweetAdapter);
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        //lookup progressbar
+        pb = (ProgressBar) findViewById(R.id.pbLoading);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_purple);
+
         populateTimeline();
     }
 
@@ -110,6 +135,54 @@ public class TimelineActivity extends AppCompatActivity {
                 throwable.printStackTrace();
             }
 
+        });
+    }
+
+    public void fetchTimelineAsync(int page) {
+        pb.setVisibility(ProgressBar.VISIBLE);
+        // Send the network request to fetch the updated data
+        // `client` here is an instance of Android Async HTTP
+        // getHomeTimeline is an example endpoint.
+        client.getHomeTimeline(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);// Remember to CLEAR OUT old items before appending in the new ones
+                tweetAdapter.clear();
+                tweets.clear();
+                // ...the data has come back, add new items to your adapter...
+                for (int i = 0; i < response.length(); i++) {
+                    // convert each object to a Tweet model
+                    // add that Tweet model to our data source
+                    // notify the adapter that we've added an item
+                    try {
+                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
+                        tweets.add(tweet);
+                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d(TAG, "Adding all tweets");
+                tweetAdapter.addAll(tweets);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                Log.d(TAG, "Finished adding all tweets");
+                swipeContainer.setRefreshing(false);
+                pb.setVisibility(ProgressBar.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d(TAG, "Fetch timeline error: " + throwable.toString());
+                Log.d(TAG, responseString);
+                pb.setVisibility(ProgressBar.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.d(TAG, "Fetch timeline error: " + throwable.toString());
+                Log.d(TAG, errorResponse.toString());
+                pb.setVisibility(ProgressBar.INVISIBLE);
+            }
         });
     }
 
