@@ -8,13 +8,13 @@
 
     <ImageButton
         android:id="@+id/tweetButton"
-        android:layout_width="88dp"
-        android:layout_height="48dp"
+        android:layout_width="56dp"
+        android:layout_height="54dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="14dp"
         android:layout_marginTop="18dp"
-        android:background="@drawable/twitter_logo"
+        android:background="@drawable/ic_launcher_twitter"
         android:scaleType="fitCenter" />
 
     <android.support.design.widget.TextInputLayout

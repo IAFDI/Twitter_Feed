@@ -2,8 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="5dp"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
 
     <ImageView
         android:id="@+id/tvProfileImage"
@@ -42,4 +43,15 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/bodyImage"
+        android:layout_width="208dp"
+        android:layout_height="94dp"
+        android:layout_below="@id/tvBody"
+        android:layout_alignLeft="@id/tvBody"
+        android:layout_marginTop="20dp"
+        android:visibility="visible"
+        app:srcCompat="@android:color/darker_gray" />
+
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -28,6 +31,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     private List<Tweet> mTweets;
     Context context;
+    ProgressBar pb;
 
     //pass in the Tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets){
@@ -46,6 +50,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
     //bind values based on the position of the element
+    @SuppressLint("CheckResult")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //get data according to position
@@ -63,6 +68,19 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 .load(tweet.user.profileImageUrl)
                 .apply(new RequestOptions().transform( new RoundedCornersTransformation(radius, margin)))
                 .into(holder.tvProfileImage);
+
+        if (tweet.imageURL.equals("N/A")){
+//            holder.tvBodyImage.setVisibility(View.INVISIBLE);
+//            holder.tvBodyImage.setMaxHeight(1);
+        }else{
+//            holder.tvBodyImage.setMaxHeight(94);
+//            holder.tvBodyImage.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                .load(tweet.imageURL)
+                .apply(new RequestOptions().transform( new RoundedCornersTransformation(30, 10)))
+                .into(holder.tvBodyImage);
+        }
+
     }
 
     // Clean all elements of the recycler
@@ -89,6 +107,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvUsername;
         public TextView tvBody;
         public TextView tvTimeAgo;
+        public ImageView tvBodyImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -98,6 +117,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tvUsername = (TextView) itemView.findViewById(R.id.tvUsername);
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvTimeAgo = (TextView) itemView.findViewById(R.id.tvTimeAgo);
+            tvBodyImage = (ImageView) itemView.findViewById(R.id.bodyImage);
 
         }
     }
